@@ -1,0 +1,96 @@
+using System;
+
+struct Driver
+{
+    public string Name;
+    public int Years;
+
+    public void Print()
+    {
+        Console.WriteLine($"Voditel: {Name}, Ctaj: {Years} Years");
+    }
+}
+
+class Car
+{
+    public string Model;
+    public Driver Driver;
+    public double Fuel;
+
+    public delegate double FuelConsumption(double fuel, int speed);
+
+    public Car(string model, Driver driver, double fuel)
+    {
+        Model = model;
+        Driver = driver;
+        Fuel = 100;
+        
+        Console.WriteLine($"{Model} - Toplivo: {Fuel}L");
+    }
+
+    public void Drive()
+    {
+        Console.WriteLine($"{Model} edet");
+    }
+
+    public void Drive(int speed, FuelConsumption consumption)
+    {
+        Console.WriteLine($"{Model} edet co ckoroctu {speed}");
+        Driver.Print();
+
+        Fuel = consumption(Fuel, speed);
+        if (Fuel < 0) Fuel = 0;
+        Console.WriteLine($"ostaloc toplivo: {Fuel:F2} L");
+    }
+
+    public static double NormalConsumption(double fuel, int speed)
+    {
+        return fuel - (speed * 0.05);
+    }
+
+    public static double EcoConsumption(double fuel, int speed)
+    {
+        return fuel - (speed * 0.03);
+    }
+}
+
+class GTR : Car
+{
+    public GTR(string model, Driver driver, double fuel)
+        : base(model, driver, fuel) { }
+}
+
+class Dodge : Car
+{
+    public Dodge(string model, Driver driver, double fuel)
+        : base(model, driver, fuel) { }
+}
+
+class Printer
+{
+    public static void Print<T>(T data)
+    {
+        Console.WriteLine(data);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Driver driver1 = new Driver { Name = "Biba", Years = 10 };
+        Driver driver2 = new Driver { Name = "Boba", Years = 7 };
+
+        GTR gtr = new GTR("GTR", driver1, 100);
+        Dodge dodge = new Dodge("Dodge", driver2, 120);
+
+        gtr.Drive();
+        gtr.Drive(120, Car.NormalConsumption);
+
+        Console.WriteLine();
+
+        dodge.Drive();
+        dodge.Drive(240, Car.EcoConsumption);
+
+    }
+}
